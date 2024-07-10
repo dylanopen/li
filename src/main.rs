@@ -4,12 +4,14 @@ mod res;
 mod time;
 mod camera;
 mod conf;
+mod player;
 
 pub use game::*;
 pub use debug::*;
 pub use conf::*;
 pub use time::*;
 pub use camera::*;
+pub use player::*;
 
 use bevy::prelude as p;
 
@@ -23,6 +25,7 @@ fn main()
             LIConfigPlugin,
             LITimePlugin,
             LICameraPlugin,
+            LIPlayerPlugin,
             LIDebugPlugin,
         ))
         .run();
