@@ -4,7 +4,9 @@ version = "0.0.2"
 edition = "2021"
 
 [dependencies]
-bevy = "0.14.0"
+bevy = { version = "0.14.0", features = ["dynamic_linking"] }
+serde = "1.0.204"
+serde_json = "1.0.120"
 
 [profile.dev]
 opt-level = 1

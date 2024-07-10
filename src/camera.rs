@@ -15,6 +15,9 @@ impl p::Plugin for LICameraPlugin
             .add_systems(p::Startup, spawn_world_camera)
             .add_systems(p::Update,
                 move_camera_left.run_if(common_conditions::input_pressed(KeyCode::KeyA)),
+                move_camera_right.run_if(common_conditions::input_pressed(KeyCode::KeyD)),
+                move_camera_up.run_if(common_conditions::input_pressed(KeyCode::KeyW)),
+                move_camera_down.run_if(common_conditions::input_pressed(KeyCode::KeyS)),
             );
     }
 }
@@ -30,10 +33,11 @@ fn spawn_world_camera(mut commands: p::Commands)
     commands.spawn((world_camera, WorldCameraMarker));
 }
 
-fn move_camera_left(mut query_camera: Query<&mut Transform, With<WorldCameraMarker>>)
+fn move_camera_left(mut query_camera: Query<&mut Transform, With<WorldCameraMarker>>, config: Res<LIConfig>)
 {
-    let mut camera = query_camera.single_mut();
-    camera.translation.x -= 1.0;
-    println!("{}", camera.translation.x);
+    for mut camera in query_camera.iter_mut()
+    {
+        camera.translation.x -= config.player_speed;
+    }
 }
 

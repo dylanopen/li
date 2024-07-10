@@ -3,12 +3,13 @@ mod debug;
 mod res;
 mod time;
 mod camera;
+mod conf;
 
-use game::*;
-use debug::*;
-use res::*;
-use time::*;
-use camera::*;
+pub use game::*;
+pub use debug::*;
+pub use conf::*;
+pub use time::*;
+pub use camera::*;
 
 use bevy::prelude as p;
 
@@ -19,9 +20,11 @@ fn main()
         .add_plugins((
             p::DefaultPlugins,
             LIPlugin,
+            LIConfigPlugin,
             LITimePlugin,
             LICameraPlugin,
             LIDebugPlugin,
         ))
         .run();
 }
+
