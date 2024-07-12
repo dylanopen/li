@@ -1,6 +1,20 @@
 use std::fs;
 
-use bevy::prelude as p;
+use bevy::{prelude::{self as p, Query, Res, With}, window::{PrimaryWindow, Window}};
+
+
+
+#[derive(p::Resource, serde::Deserialize)]
+pub struct LIConfig
+{
+    pub player_speed: f64,
+    pub camera_zoom_speed: f64,
+    pub camera_scale_min: f64,
+    pub camera_scale_max: f64,
+    pub initial_camera_scale: f64,
+    pub window_title: String,
+}
+
 
 
 pub struct LIConfigPlugin;
@@ -10,15 +24,9 @@ impl p::Plugin for LIConfigPlugin
     fn build(&self, app: &mut p::App)
     {
         app
-            .insert_resource(load_li_config("res/settings.json"));
+            .insert_resource(load_li_config("res/settings.json"))
+            .add_systems(p::Startup, set_window_title);
     }
-}
-
-
-#[derive(p::Resource, serde::Deserialize)]
-pub struct LIConfig
-{
-    pub player_speed: f32,
 }
 
 
@@ -32,5 +40,16 @@ fn load_li_config(filepath: &'static str) -> LIConfig
         .expect("error - failed to parse config file - make sure it is formatted correctly and contains all fields.");
 
     config
+}
+
+fn set_window_title(
+    mut window_query: Query<&mut Window, With<PrimaryWindow>>,
+    config: Res<LIConfig>
+) -> ()
+{
+    if let Ok(mut window) = window_query.get_single_mut()
+    {
+        window.title = config.window_title.clone();
+    } 
 }
 

@@ -1,3 +1,8 @@
 {
-	"player_speed": 1.0
+	"window_title": "Little Island",
+	"player_speed": 0.08,
+	"camera_zoom_speed": 2,
+	"camera_scale_max": 0.0625,
+	"camera_scale_min": 0.00244140625,
+	"initial_camera_scale": 0.006
 }

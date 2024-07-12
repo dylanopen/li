@@ -5,6 +5,7 @@ mod time;
 mod camera;
 mod conf;
 mod player;
+mod tile;
 
 pub use game::*;
 pub use debug::*;
@@ -12,6 +13,7 @@ pub use conf::*;
 pub use time::*;
 pub use camera::*;
 pub use player::*;
+pub use tile::*;
 
 use bevy::prelude as p;
 

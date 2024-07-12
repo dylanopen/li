@@ -1,6 +1,6 @@
 use bevy::prelude::{self as p, KeyCode, Query, With, Res};
 use bevy::input::common_conditions;
-use bevy::transform::components::Transform;
+use bevy::render::camera::OrthographicProjection;
 use bevy::prelude::IntoSystemConfigs;
 
 use crate::*;
@@ -16,51 +16,74 @@ impl p::Plugin for LICameraPlugin
         app
             .add_systems(p::Startup, spawn_world_camera)
             .add_systems(p::Update, (
-                move_camera_left.run_if(common_conditions::input_pressed(KeyCode::KeyA)),
-                move_camera_right.run_if(common_conditions::input_pressed(KeyCode::KeyD)),
-                move_camera_up.run_if(common_conditions::input_pressed(KeyCode::KeyW)),
-                move_camera_down.run_if(common_conditions::input_pressed(KeyCode::KeyS)),
+                camera_zoom_in.run_if(common_conditions::input_pressed(KeyCode::Equal)),
+                camera_zoom_out.run_if(common_conditions::input_pressed(KeyCode::Minus)),
             ));
     }
 }
 
 
-fn spawn_world_camera(mut commands: p::Commands)
+#[derive(p::Component)]
+pub struct GameCamera;
+
+
+fn spawn_world_camera(
+    mut commands: p::Commands,
+    config: Res<LIConfig>
+) -> ()
 {
     let mut world_camera = p::Camera2dBundle::default();
-    world_camera.projection.scale = 1.0;
-    commands.spawn((world_camera, MoveWithPlayer));
+    world_camera.projection.scale = (config.initial_camera_scale) as f32;
+    commands.spawn((GameCamera, MoveWithPlayer, world_camera));
 }
 
-fn move_camera_left(mut query_camera: Query<&mut Transform, With<MoveWithPlayer>>, config: Res<LIConfig>)
+pub fn zoom_cameras(
+    projections: &mut Query<&mut OrthographicProjection, With<GameCamera>>,
+    scale_factor: f64,
+    config: Res<LIConfig>
+) -> ()
 {
-    for mut camera in query_camera.iter_mut()
+    for mut projection in projections.iter_mut()
     {
-        camera.translation.x -= config.player_speed;
+        println!("sf = {}; scale = {}", scale_factor, projection.scale);
+        projection.scale *= scale_factor as f32;
+        if (projection.scale as f64) < config.camera_scale_min
+        {
+            projection.scale = config.camera_scale_min as f32;
+        }
+        if (projection.scale as f64) > config.camera_scale_max
+        {
+            projection.scale = config.camera_scale_max as f32;
+        }
     }
 }
 
-fn move_camera_right(mut query_camera: Query<&mut Transform, With<MoveWithPlayer>>, config: Res<LIConfig>)
+pub fn camera_zoom_in(
+    mut projections: Query<&mut OrthographicProjection, With<GameCamera>>,
+    delta_time_res: Res<DeltaTime>,
+    config: Res<LIConfig>
+) -> ()
 {
-    for mut camera in query_camera.iter_mut()
-    {
-        camera.translation.x += config.player_speed;
-    }
+    // TODO: zooming in and zooming out will not be completely even due
+    // to how percentage changes work (although this may now  be fixed).
+
+    let scale_factor = 1.0 / (1.0 + delta_time_res.0 * config.camera_zoom_speed);
+    zoom_cameras(&mut projections, scale_factor, config);
 }
 
-fn move_camera_up(mut query_camera: Query<&mut Transform, With<MoveWithPlayer>>, config: Res<LIConfig>)
+pub fn camera_zoom_out(
+    mut projections: Query<&mut OrthographicProjection, With<GameCamera>>,
+    delta_time_res: Res<DeltaTime>,
+    config: Res<LIConfig>
+) -> ()
 {
-    for mut camera in query_camera.iter_mut()
-    {
-        camera.translation.y += config.player_speed;
-    }
+    let scale_factor = 1.0 + delta_time_res.0 * config.camera_zoom_speed; // * config.zoom_speed
+    zoom_cameras(&mut projections, scale_factor, config);
 }
 
-fn move_camera_down(mut query_camera: Query<&mut Transform, With<MoveWithPlayer>>, config: Res<LIConfig>)
-{
-    for mut camera in query_camera.iter_mut()
-    {
-        camera.translation.y -= config.player_speed;
-    }
-}
+// NOTE: Zooming in requires you to REDUCE the scale. Think of it as
+//       making the viewport smaller so what is still visible is larger.
+//
+//       Zooming out is the opposite - INCREASE the scale so that more
+//       of the scene is visible.
 
