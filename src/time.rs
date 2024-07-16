@@ -1,7 +1,5 @@
 use bevy::prelude as p;
 
-use crate::*;
-
 
 #[derive(p::Resource)]
 pub struct DeltaTime(pub f64);

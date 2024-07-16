@@ -1,11 +1,11 @@
 mod game;
 mod debug;
-mod res;
 mod time;
 mod camera;
 mod conf;
 mod player;
 mod tile;
+mod texture;
 
 pub use game::*;
 pub use debug::*;
@@ -14,6 +14,7 @@ pub use time::*;
 pub use camera::*;
 pub use player::*;
 pub use tile::*;
+pub use texture::*;
 
 use bevy::prelude as p;
 
