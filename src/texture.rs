@@ -1,4 +1,4 @@
-use bevy::asset::LoadedFolder;
+/*use bevy::asset::LoadedFolder;
 use p::{AssetServer, Res, ResMut, Resource};
 
 use crate::*;
@@ -21,7 +21,8 @@ fn load_textures(
     asset_server: Res<AssetServer>
 ) -> ()
 {
-    textures = LITextures::load_dir(asset_server, "res");
+    textures.directory = "res".to_string();
+    textures.handle = LITextures::load_dir(asset_server, "res");
 }
 
 
@@ -45,14 +46,11 @@ impl LITextures
     pub fn load_dir<S: Into<String>>(
         asset_server: Res<AssetServer>,
         directory: S,
-    ) -> Self
+    ) -> Handle
     {
         let directory = directory.into();
-        LITextures {
-            directory: directory.clone(),
-            handle: Some(asset_server.load_folder(directory)),
-        }
+        asset_server.load_folder(directory)
     }
-}
+}*/
 
 

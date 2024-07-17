@@ -5,7 +5,8 @@ mod camera;
 mod conf;
 mod player;
 mod tile;
-mod texture;
+//mod texture;
+mod level;
 
 pub use game::*;
 pub use debug::*;
@@ -14,7 +15,12 @@ pub use time::*;
 pub use camera::*;
 pub use player::*;
 pub use tile::*;
-pub use texture::*;
+//pub use texture::*;
+pub use level::*;
+
+
+pub mod vanilla;
+
 
 use bevy::prelude as p;
 
@@ -29,8 +35,13 @@ fn main()
             LITimePlugin,
             LICameraPlugin,
             LIPlayerPlugin,
+            LITilePlugin,
+            LILevelPlugin,
             LIDebugPlugin,
         ))
+        .add_plugins(
+            vanilla::VanillaPlugins
+        )
         .run();
 }
 

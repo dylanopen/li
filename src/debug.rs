@@ -30,6 +30,11 @@ fn print_fps(delta_time_res: p::Res<DeltaTime>)
     println!("delta time = {}; fps = {}", delta, fps);
 }
 
+fn print_levels(levels: p::Res<Levels>)
+{
+    println!("{:?}", levels);
+}
+
 fn spawn_test_square(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
